@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!--  multipart请求信息的最大尺寸（文件上传用，该属性指定Struts 2文件上传中整个请求内容允许的最大字节数） -->
+	<constant name="struts.multipart.maxSize" value="209715200"/>
+	<!-- 指定Web应用的默认编码集，相当于调用 HttpServletRequest的setCharacterEncoding方法 -->
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<!-- 该属性设置Struts 2是否支持动态方法调用，该属性的默认值是true。如果需要关闭动态方法调用，则可设置该属性为false -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<!-- 定义一个包 -->
+	<package name="default-package" extends="json-default" abstract="true">
+		<!-- 装配几个我们用到的拦截器/拦截器栈 -->
+		<interceptors>
+			<!-- 定义一个判断是否登陆的拦截器，在每个操作之前都要判断是否登陆 -->
+			<!-- <interceptor name="login" class="com.watchdata.mepay.web.interceptor.LoginCheckInterceptor"/> -->
+			<!-- 定义一个权限拦截器 ，在每个操作之前都要判断是否有此权限（取出此用户的权限列表比较）-->
+			<interceptor name="permission" class="org.reacher.common.permission.PermissionInterceptor">
+			</interceptor>
+			<!-- 定义一个系统拦截器 -->
+        	<interceptor name="system" class="org.reacher.common.interceptor.ReacherInterceptor"/>
+        	<!-- 配置拦截器栈 -->
+        	<interceptor-stack name="reacherStack">
+        		<!-- 加入默认拦截器，因为struts的很多功能都是通过这些拦截器实现的 -->
+        		<interceptor-ref name="defaultStack">
+        			<param name="exception.logEnabled">true</param>
+        			<param name="exception.logLevel">ERROR</param>
+        			<param name="validation.excludeMethods">*</param>
+        			<param name="validation.includeMethods">login,save</param>
+        		</interceptor-ref>
+        		<interceptor-ref name="tokenSession"/>
+        		<interceptor-ref name="system"/>
+        		<interceptor-ref name="json"/>
+        	</interceptor-stack>
+        </interceptors>
+        <!-- 设置本应用默认使用的拦截器（栈） -->
+        <default-interceptor-ref name="reacherStack"/>
+        <!-- 设置全局结构，相当于全局变量，全局都承认的结果转向 -->
+		<global-results>
+			<result name="redirectRegisterLogin">/login.jsp</result>
+			<result type="chain" name="redirectUserLogin">
+				<param name="actionName">onShowMySite</param>
+            	<param name="namespace">/sm</param>
+			</result>
+			<result name="globalError">/globalError.jsp</result>
+			<result name="ajaxSessionExpired">/ajaxSessionExpired.jsp</result>
+			<result name="invalid.token">/reacher.jsp</result>
+		</global-results>
+		<!-- 全局异常及当发生某个异常时对应那个结果 -->
+		<global-exception-mappings>
+			<!-- <exception-mapping result="redirectUserLogin" exception="com.lefu.template.exception.UserSessionException"></exception-mapping> -->
+			<exception-mapping result="globalError" exception="java.lang.Exception"></exception-mapping>
+        </global-exception-mappings>
+	</package> 
+	
+	<package name="default" namespace="/">
+		<default-action-ref name="index" />
+	</package>
+	<package name="userManagement" extends="default-package"></package>
+	<package name="indexManagement" extends="default-package"></package>
+</struts>

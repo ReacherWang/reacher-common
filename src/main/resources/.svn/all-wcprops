@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/reacher/!svn/ver/4/reacher/src/main/resources
+END
+system.properties
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/reacher/!svn/ver/1/reacher/src/main/resources/system.properties
+END
+mybatis-configuration.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/reacher/!svn/ver/4/reacher/src/main/resources/mybatis-configuration.xml
+END
+jdbc.properties
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/reacher/!svn/ver/1/reacher/src/main/resources/jdbc.properties
+END
+log4j.properties
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/reacher/!svn/ver/1/reacher/src/main/resources/log4j.properties
+END
+xwork-conversion.properties
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/reacher/!svn/ver/1/reacher/src/main/resources/xwork-conversion.properties
+END
+struts.xml
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/reacher/!svn/ver/4/reacher/src/main/resources/struts.xml
+END

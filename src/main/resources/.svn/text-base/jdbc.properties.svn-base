@@ -1,0 +1,6 @@
+#Created by JInto - www.guh-software.de
+#Wed Sep 04 22:20:15 CST 2013
+base.driverClass=com.mysql.jdbc.Driver
+base.jdbcUrl=jdbc\:mysql\://localhost\:3306/template?characterEncoding\=utf8
+base.password=template
+base.username=template
