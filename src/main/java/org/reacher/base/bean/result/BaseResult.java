@@ -66,7 +66,7 @@ public abstract class BaseResult implements Bean {
 			break;
 		}
 		if(null != message && 0 < message.length) {
-			result.accumulate("message", message);
+			result.accumulate("message", message.toString());
 		}
 		return result.toString();
 	}
