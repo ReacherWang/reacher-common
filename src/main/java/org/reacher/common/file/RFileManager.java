@@ -75,7 +75,7 @@ public final class RFileManager {
 			logger.error("获取文件存储目录失败！");
 			return null;
 		}
-		if(!compressed) {
+		if(compressed) {
 			return new File(fileDirectory.getPath() + File.separator + checksum + "-compressed");
 		}
 		return new File(fileDirectory.getPath() + File.separator + checksum);
