@@ -22,6 +22,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,6 +31,8 @@ import org.json.JSONObject;
  *
  */
 public final class RHttpClient {
+	
+	private static final Logger LOGGER = Logger.getLogger(RHttpClient.class);
 	
 	private RHttpClient() {
 		
@@ -43,6 +46,7 @@ public final class RHttpClient {
 			http = new HttpPost(url.toString());
 			http.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
 		} catch (Exception e) {
+			LOGGER.error(e);
 			return null;
 		}
 		return RHttpClient.request(http, header);
@@ -55,6 +59,7 @@ public final class RHttpClient {
 			http = new HttpPost(url.toString());
 			http.setEntity(new StringEntity(data, "utf-8"));
 		} catch (Exception e) {
+			LOGGER.error(e);
 			return null;
 		}
 		return RHttpClient.request(http, header);
@@ -67,6 +72,7 @@ public final class RHttpClient {
 			URL url = new URL(uri);
 			http = new HttpGet(url.toString());
 		} catch (Exception e) {
+			LOGGER.error(e);
 			return null;
 		}
 		return RHttpClient.request(http, header);
@@ -83,15 +89,18 @@ public final class RHttpClient {
 				return null;
 			}
 			 if (HttpURLConnection.HTTP_OK != response.getStatusLine().getStatusCode()) {
+				 LOGGER.error("HTTP请求返回为：" + response.getStatusLine().getStatusCode());
 				 return null;
 			 }
 			return EntityUtils.toString(response.getEntity(), "utf-8");
 		} catch (Exception e) {
+			LOGGER.error(e);
 			return null;
 		} finally {
 			try {
 				httpClient.close();
 			} catch (IOException e) {
+				LOGGER.error(e);
 				return null;
 			}
 		}
