@@ -45,28 +45,28 @@ public abstract class BaseResult implements Bean {
 		JSONObject result = new JSONObject();
 		switch(code) {
 		case 200:
-			result.accumulate("success", true);
-			result.accumulate("status", code);
-			result.accumulate("message", "请求已完成!");
+			result.put("success", true);
+			result.put("status", code);
+			result.put("message", "请求已完成!");
 			break;
 		case 400:
-			result.accumulate("success", false);
-			result.accumulate("status", code);
-			result.accumulate("message", "错误请求!");
+			result.put("success", false);
+			result.put("status", code);
+			result.put("message", "错误请求!");
 			break;
 		case 404:
-			result.accumulate("success", false);
-			result.accumulate("status", code);
-			result.accumulate("message", "找不到!");
+			result.put("success", false);
+			result.put("status", code);
+			result.put("message", "找不到!");
 			break;
 		case 500:
-			result.accumulate("success", false);
-			result.accumulate("status", code);
-			result.accumulate("message", "内部错误!");
+			result.put("success", false);
+			result.put("status", code);
+			result.put("message", "内部错误!");
 			break;
 		}
 		if(null != message && 0 < message.length) {
-			result.accumulate("message", message[0]);
+			result.put("message", message[0]);
 		}
 		return result.toString();
 	}
