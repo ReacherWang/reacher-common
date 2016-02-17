@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.reacher.base.bean.criteria.SearchCriteria;
 import org.reacher.base.bean.entity.BaseEntity;
+import org.reacher.base.bean.result.HTTPStatus;
+import org.reacher.base.bean.result.Result;
 import org.reacher.base.bean.view.BaseView;
 import org.reacher.base.dao.BaseDao;
 import org.reacher.common.converter.BeanConverter;
@@ -32,90 +34,107 @@ public abstract class BaseService<L extends BaseView, D extends BaseView> implem
 	protected abstract BaseDao<BaseEntity> getDao();
 
 	@Override
-	public boolean save(D view) {
+	public Result<D> save(D view) {
 		if(null == view) {
-			return false;
+			return Result.create(HTTPStatus.BadRequest);
 		}
 		view.setId(this.getDao().save(beanConverter.convertToEntity(view)));
-		return 0 >= view.getId() ? false : true;
+		if(0 >= view.getId()) {
+			return Result.create(HTTPStatus.ServerError);
+		}
+		return Result.create(HTTPStatus.Ok);
 	}
-
+	
 	@Override
-	public boolean update(D view) {
+	public Result<D> update(D view) {
 		if(null == view || view.isNew()) {
-			return false;
+			return Result.create(HTTPStatus.BadRequest);
 		}
-		return this.getDao().update(beanConverter.convertToEntity(view));
+		if(!this.getDao().update(beanConverter.convertToEntity(view))) {
+			return Result.create(HTTPStatus.ServerError);
+		}
+		return Result.create(HTTPStatus.Ok);
 	}
 
 	@Override
-	public boolean delete(long id) {
+	public Result<D> delete(long id) {
 		if(0 >= id) {
-			return false;
+			return Result.create(HTTPStatus.BadRequest);
 		}
-		return this.getDao().delete(id);
+		if(!this.getDao().delete(id)) {
+			return Result.create(HTTPStatus.ServerError);
+		}
+		return Result.create(HTTPStatus.Ok);
 	}
 
 	@Override
-	public boolean batchDelete(List<Integer> ids) {
+	public Result<L> batchDelete(List<Integer> ids) {
 		if(null == ids || 0 >= ids.size()) {
-			return false;
+			return Result.create(HTTPStatus.BadRequest);
 		}
-		return this.getDao().batchDelete(ids);
+		if(!this.getDao().batchDelete(ids)) {
+			return Result.create(HTTPStatus.ServerError);
+		}
+		return Result.create(HTTPStatus.Ok);
 	}
 
 	@Override
-	public D findById(long id) {
+	public Result<D> findById(long id) {
 		if(0 >= id) {
-			return null;
+			return Result.create(HTTPStatus.BadRequest);
 		}
 		BaseEntity entity = this.getDao().findById(id);
 		if(null == entity) {
-			return null;
+			return Result.create(HTTPStatus.ServerError);
 		}
-		return beanConverter.convertFromEntity(entity, this.detailClass);
+		D data = beanConverter.convertFromEntity(entity, this.detailClass);
+		return Result.create(HTTPStatus.Ok, data);
 	}
 
 	@Override
-	public List<L> findAll() {
+	public Result<L> findAll() {
 		List<BaseEntity> entities = this.getDao().findAll();
 		if(CollectionUtil.isEmpty(entities)) {
-			return new ArrayList<L>();
+			return Result.create(HTTPStatus.Ok, new ArrayList<L>());
 		}
-		return beanConverter.convertFromEntities(entities, this.listClass);
+		List<L> datas = beanConverter.convertFromEntities(entities, this.listClass);
+		return Result.create(HTTPStatus.Ok, datas);
 	}
 
 	@Override
-	public List<L> findAll(RPageBounds page) {
+	public Result<L> findAll(RPageBounds page) {
 		if(null == page || 0 >= page.getSize() || 0 >= page.getNumber()) {
-			return null;
+			return Result.create(HTTPStatus.BadRequest);
 		}
 		List<BaseEntity> entities = this.getDao().findAll(page);
 		if(CollectionUtil.isEmpty(entities)) {
-			return new ArrayList<L>();
+			return Result.create(HTTPStatus.Ok, new ArrayList<L>());
 		}
-		return beanConverter.convertFromEntities(entities, this.listClass);
+		List<L> datas = beanConverter.convertFromEntities(entities, this.listClass);
+		return Result.create(HTTPStatus.Ok, datas);
 	}
 
 	@Override
-	public List<L> find(SearchCriteria criteria) {
+	public Result<L> find(SearchCriteria criteria) {
 		List<BaseEntity> entities = this.getDao().find(criteria);
 		if(CollectionUtil.isEmpty(entities)) {
-			return new ArrayList<L>();
+			return Result.create(HTTPStatus.Ok, new ArrayList<L>());
 		}
-		return beanConverter.convertFromEntities(entities, this.listClass);
+		List<L> datas = beanConverter.convertFromEntities(entities, this.listClass);
+		return Result.create(HTTPStatus.Ok, datas);
 	}
 
 	@Override
-	public List<L> find(SearchCriteria criteria, RPageBounds page) {
+	public Result<L> find(SearchCriteria criteria, RPageBounds page) {
 		if(null == page || 0 >= page.getSize() || 0 >= page.getNumber()) {
-			return null;
+			return Result.create(HTTPStatus.BadRequest);
 		}
 		List<BaseEntity> entities = this.getDao().find(criteria, page);
 		if(CollectionUtil.isEmpty(entities)) {
-			return new ArrayList<L>();
+			return Result.create(HTTPStatus.Ok, new ArrayList<L>());
 		}
-		return beanConverter.convertFromEntities(entities, this.listClass);
+		List<L> datas = beanConverter.convertFromEntities(entities, this.listClass);
+		return Result.create(HTTPStatus.Ok, datas);
 	}
 
 }

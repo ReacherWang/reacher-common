@@ -3,7 +3,6 @@
  */
 package org.reacher.base.bean.result;
 
-import org.json.JSONObject;
 import org.reacher.base.bean.Bean;
 
 /**
@@ -14,9 +13,11 @@ public abstract class BaseResult implements Bean {
 
 	private static final long serialVersionUID = 1L;
 	
-	private boolean success = true;
+	private int status = 0;
 	
 	private String message = null;
+	
+	private boolean success = true;
 	
 	public abstract void prepare();
 	
@@ -31,8 +32,13 @@ public abstract class BaseResult implements Bean {
 	public String getMessage() {
 		return message;
 	}
+	
+	public int getStatus() {
+		return this.status;
+	}
 
 	public void setMessage(String message) {
+		this.status = 200;
 		this.message = message;
 	}
 	
@@ -41,34 +47,9 @@ public abstract class BaseResult implements Bean {
 		this.success = false;
 	}
 	
-	public static String result(int code, String... message) {
-		JSONObject result = new JSONObject();
-		switch(code) {
-		case 200:
-			result.put("success", true);
-			result.put("status", code);
-			result.put("message", "请求已完成!");
-			break;
-		case 400:
-			result.put("success", false);
-			result.put("status", code);
-			result.put("message", "错误请求!");
-			break;
-		case 404:
-			result.put("success", false);
-			result.put("status", code);
-			result.put("message", "找不到!");
-			break;
-		case 500:
-			result.put("success", false);
-			result.put("status", code);
-			result.put("message", "内部错误!");
-			break;
-		}
-		if(null != message && 0 < message.length) {
-			result.put("message", message[0]);
-		}
-		return result.toString();
+	public void setErrorMessage(int status, String message) {
+		this.status = status;
+		this.message = message;
+		this.success = false;
 	}
-	
 }

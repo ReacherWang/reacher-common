@@ -6,7 +6,8 @@ package org.reacher.base.action;
 import java.util.List;
 
 import org.reacher.base.bean.criteria.SearchCriteria;
-import org.reacher.base.bean.result.BaseResult;
+import org.reacher.base.bean.result.HTTPStatus;
+import org.reacher.base.bean.result.Result;
 import org.reacher.base.bean.view.BaseView;
 import org.reacher.base.service.IService;
 import org.reacher.common.pagination.RPageBounds;
@@ -37,63 +38,64 @@ public abstract class BaseAction <L extends BaseView, D extends BaseView, S exte
 	
 	protected abstract boolean enablePagination();
 	
-	public String list() {
+	public Result<L> list() {
+		Result<L> result = null;
 		if(this.enablePagination()) {
 			if(null == this.page) {
 				this.page = new RPageBounds();
 			}
-			this.views = this.getService().find(this.getSearchCriteria(), this.page);
+			result = this.getService().find(this.getSearchCriteria(), this.page);
 		} else {
 			this.page = null;
-			this.views = this.getService().find(this.getSearchCriteria());
+			result = this.getService().find(this.getSearchCriteria());
 		}
-		return BaseResult.result(200);
+		if(result.isSuccess()) {
+			this.views = result.getDatas();
+		}
+		return result;
 	}
 	
-	public String listAll() {
-		this.views = this.getService().find(this.getSearchCriteria());
-		return BaseResult.result(200);
+	public Result<L> listAll() {
+		Result<L> result = this.getService().find(this.getSearchCriteria());
+		if(result.isSuccess()) {
+			this.views = result.getDatas();
+		}
+		return result;
 	}
 	
-	public String detail() {
+	public Result<D> detail() {
 		if(null == this.view || this.view.isNew()) {
-			return BaseResult.result(400);
+			return Result.create(HTTPStatus.BadRequest);
 		}
-		this.view = this.getService().findById(this.view.getId());
-		if(null == this.view) {
-			return BaseResult.result(404);
+		Result<D> result = this.getService().findById(this.view.getId());
+		if(result.isSuccess()) {
+			this.view = result.getData();
 		}
-		return BaseResult.result(200);
+		return result;
 	}
 	
-	public String save() {
+	public Result<D> save() {
 		if(null == this.view) {
-			return BaseResult.result(400);
+			return Result.create(HTTPStatus.BadRequest);
 		}
-		String result = this.view.validate();
-		if(null != result) {
-			return BaseResult.result(400, result);
+		String message = this.view.validate();
+		if(null != message) {
+			return Result.create(HTTPStatus.BadRequest, message);
 		}
+		Result<D> result = null;
 		if(!this.view.isNew()) {
-			if(!this.getService().update(this.view)) {
-				return BaseResult.result(500);
-			}
+			result = this.getService().update(this.view);
 		} else {
-			if(!this.getService().save(this.view)) {
-				return BaseResult.result(500);
-			}
+			result = this.getService().save(this.view);
 		}
-		return BaseResult.result(200);
+		return result;
 	}
 	
-	public String delete() {
+	public Result<D> delete() {
 		if(null == this.view || this.view.isNew()) {
-			return BaseResult.result(400);
+			return Result.create(HTTPStatus.BadRequest);
 		}
-		if(!this.getService().delete(this.view.getId())) {
-			return BaseResult.result(500);
-		}
-		return BaseResult.result(200);
+		return this.getService().delete(this.view.getId());
 	}
 	
 	public D getView() {
