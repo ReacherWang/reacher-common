@@ -22,7 +22,7 @@ public enum HTTPStatus {
 		this.message = message;
 	}
 	
-	public int getStatus() {
+	public int getCode() {
 		return this.code;
 	}
 	
@@ -30,4 +30,12 @@ public enum HTTPStatus {
 		return this.message;
 	}
 	
+	public static HTTPStatus findByCode(int code) {
+		for(HTTPStatus status: HTTPStatus.values()) {
+			if(status.getCode() == code) {
+				return status;
+			}
+		}
+		return null;
+	}
 }

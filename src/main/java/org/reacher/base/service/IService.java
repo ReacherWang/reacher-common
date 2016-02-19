@@ -6,7 +6,7 @@ package org.reacher.base.service;
 import java.util.List;
 
 import org.reacher.base.bean.criteria.SearchCriteria;
-import org.reacher.base.bean.result.Result;
+import org.reacher.base.bean.result.ResultNode;
 import org.reacher.base.bean.view.BaseView;
 import org.reacher.common.pagination.RPageBounds;
 
@@ -16,22 +16,22 @@ import org.reacher.common.pagination.RPageBounds;
  */
 public interface IService<L extends BaseView, D extends BaseView> {
 	
-	public Result<D> save(D view);
+	public ResultNode<D> save(D view);
 	
-	public Result<D> update(D view);
+	public ResultNode<D> update(D view);
 	
-	public Result<D> delete(long id);
+	public ResultNode<D> delete(long id);
 	
-	public Result<L> batchDelete(List<Integer> ids);
+	public ResultNode<L> batchDelete(List<Integer> ids);
 	
-	public Result<D> findById(long id);
+	public ResultNode<D> findById(long id);
 	
-	public Result<L> findAll();
+	public ResultNode<L> findAll();
 	
-	public Result<L> findAll(RPageBounds page);
+	public ResultNode<L> findAll(RPageBounds page);
 	
-	public Result<L> find(SearchCriteria criteria);
+	public ResultNode<L> find(SearchCriteria criteria);
 	
-	public Result<L> find(SearchCriteria criteria, RPageBounds page);
+	public ResultNode<L> find(SearchCriteria criteria, RPageBounds page);
 	
 }
