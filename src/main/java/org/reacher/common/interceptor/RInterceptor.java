@@ -27,10 +27,10 @@ public class RInterceptor extends AbstractInterceptor {
 	private static final Log LOG = LogFactory.getLog(RInterceptor.class);
 
 	@Override
-	public String intercept(ActionInvocation actionInvocation) throws Exception {
+	public String intercept(ActionInvocation invocation) throws Exception {
 		Pattern pattern = Pattern.compile("^ajax.+$");
-		Matcher matcher = pattern.matcher(actionInvocation.getProxy().getMethod());
-		Object action = actionInvocation.getAction();
+		Matcher matcher = pattern.matcher(invocation.getProxy().getMethod());
+		Object action = invocation.getAction();
 		if(matcher.matches()) {
 			((BaseActionSupport) action).setResult(new JSONResult());
 		} else {
@@ -38,8 +38,8 @@ public class RInterceptor extends AbstractInterceptor {
 		}
 		String result = null;
 		try {
-			actionInvocation.addPreResultListener(new RPreResultInterceptor());
-			result = actionInvocation.invoke();
+			invocation.addPreResultListener(new RPreResultInterceptor());
+			result = invocation.invoke();
 		} catch (Exception e) {
 			LOG.error(e);
 		} finally {
