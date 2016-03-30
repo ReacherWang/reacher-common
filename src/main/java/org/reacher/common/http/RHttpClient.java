@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -34,6 +35,8 @@ public final class RHttpClient {
 	
 	private static final Logger LOGGER = Logger.getLogger(RHttpClient.class);
 	
+	private static final RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(1000).setSocketTimeout(5000).build();
+	
 	private RHttpClient() {
 		
 	}
@@ -44,6 +47,7 @@ public final class RHttpClient {
 			List<NameValuePair> params = RHttpClient.preparePostUri(parameter);
 			URL url = new URL(uri);
 			http = new HttpPost(url.toString());
+			http.setConfig(config);
 			http.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
 		} catch (Exception e) {
 			LOGGER.error(e);
@@ -71,6 +75,7 @@ public final class RHttpClient {
 			uri = RHttpClient.prepareGetUri(uri, parameter);
 			URL url = new URL(uri);
 			http = new HttpGet(url.toString());
+			http.setConfig(config);
 		} catch (Exception e) {
 			LOGGER.error(e);
 			return null;

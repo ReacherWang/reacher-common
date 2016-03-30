@@ -44,7 +44,6 @@ public abstract class BaseActionSupport extends ActionSupport implements
 	public static final String JSON = "json";
 	public static final String STREAM = "stream";
 	public static final String FILE = "file";
-	public static final String LOGIN = "login";
 	public static final String CHAIN = "chain";
 	public static final String REDIRECT = "redirect";
 	

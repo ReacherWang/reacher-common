@@ -5,11 +5,12 @@ package org.reacher.common.interceptor;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
-import org.reacher.base.action.BaseActionSupport;
 import org.reacher.base.action.UserAware;
 import org.reacher.base.bean.view.RUserView;
 import org.reacher.common.annotation.RAuthentication;
@@ -27,6 +28,9 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 public class RAuthInterceptor extends AbstractInterceptor {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static final String LOGIN = "login";
+	private static final String AJAXLOGIN = "ajaxLogin";
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
@@ -44,7 +48,12 @@ public class RAuthInterceptor extends AbstractInterceptor {
 			String requestedAction = request.getServletPath();
 			String parameters = request.getQueryString();
 			session.put(RSessionKey.REQUESTED_ACTION, requestedAction + (StringUtil.isEmpty(parameters) ? "" : "?" + parameters));
-			return BaseActionSupport.LOGIN;
+			Pattern pattern = Pattern.compile("^ajax.+$");
+			Matcher matcher = pattern.matcher(invocation.getProxy().getMethod());
+			if(matcher.matches()) {
+				return AJAXLOGIN;
+			}
+			return LOGIN;
 		}
 		if (action instanceof UserAware) {
 			((UserAware) action).setUser(user);
